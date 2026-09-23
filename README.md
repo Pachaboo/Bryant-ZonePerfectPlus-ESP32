@@ -50,15 +50,20 @@ Please see all the attached pictures and read Bryant's installation manual for t
 
 ### Pictures
 
-![ESP32 Wiring](/"ESP32_Wiring.jpeg")
+ESP32 Wiring
+![ESP32 Wiring](https://github.com/Pachaboo/Bryant-ZonePerfectPlus-ESP32/blob/a1ae6d5be16ad518917c36704b0ca30306d5b35c/ESP32-Wiring.jpeg)
 
-![Bryant Control Board Wiring](/"Bryant_Wiring.jpeg")
+Bryant Control Board Wiring
+![Bryant Control Board Wiring](https://github.com/Pachaboo/Bryant-ZonePerfectPlus-ESP32/blob/a1ae6d5be16ad518917c36704b0ca30306d5b35c/Bryant-Wiring.jpeg)
 
-![My Enclosure](/"Finished_Enclosure.jpeg")
+My Enclosure
+![My Enclosure](https://github.com/Pachaboo/Bryant-ZonePerfectPlus-ESP32/blob/a1ae6d5be16ad518917c36704b0ca30306d5b35c/Finished-Enclosure.jpeg)
 
-![Mounting Location](/"Mounting_Location.jpeg")
+Mounting Location
+![Mounting Location](https://github.com/Pachaboo/Bryant-ZonePerfectPlus-ESP32/blob/a1ae6d5be16ad518917c36704b0ca30306d5b35c/Mounting-Location.jpeg)
 
-![Finished Product](/"Final_Result.jpeg")
+Finished Product
+![Finished Product](https://github.com/Pachaboo/Bryant-ZonePerfectPlus-ESP32/blob/a1ae6d5be16ad518917c36704b0ca30306d5b35c/Final-Result.jpeg)
 
 ## Sources and Attributions
 
