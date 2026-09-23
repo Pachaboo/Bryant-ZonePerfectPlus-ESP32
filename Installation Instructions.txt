@@ -143,8 +143,7 @@ ALL mode mirrors the actual Bryant behavior:
 
 NOTES
 -----
-The remote-room temperatures in T9/R1 were empirically confirmed on the
-user's Bryant installations:
+The remote-room temperatures in T9/R1 were empirically confirmed on the Bryant installations:
   slot 2 = Zone 2 sensor
   slot 3 = Zone 3 sensor
 
