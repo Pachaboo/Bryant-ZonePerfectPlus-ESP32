@@ -1,0 +1,152 @@
+Bryant Zone Perfect Plus Dual ESP32 Bridge
+Installation Instructions
+==========================================
+
+HARDWARE
+--------
+1x Olimex ESP32-POE-ISO-EA-IND, WROOM version
+2x DFRobot DFR0845 isolated RS-485/UART modules
+
+Logic-side wiring:
+
+DFR0845 #1:
+  Olimex 3.3V  -> DFR0845 +
+  Olimex GND   -> DFR0845 -
+  GPIO33 TX    -> DFR0845 T
+  GPIO32 RX    <- DFR0845 R
+
+DFR0845 #2:
+  Olimex 3.3V  -> DFR0845 +
+  Olimex GND   -> DFR0845 -
+  GPIO13 TX    -> DFR0845 T
+  GPIO16 RX    <- DFR0845 R
+
+Since there is only one pin each for 3.3V and GND, you will need to connect the serial boards' positive and negative leads together if interfacing with multiple systems.
+
+Bryant-side wiring, independently for each DFR0845:
+  DFR0845 A   -> Bryant RS+
+  DFR0845 B   -> Bryant RS-
+  DFR0845 GND -> Bryant VG
+
+Do NOT connect Bryant V+.
+Do NOT tie Bryant #1 VG to Bryant #2 VG.
+Leave each DFR0845 120-ohm termination resistor disabled.
+
+SOFTWARE
+--------
+Arduino-ESP32 core 3.3.x is the target API.
+The firmware uses ESP-MQTT bundled with the core; no third-party MQTT
+library is required.
+
+1. Install Arduino IDE 2.x.
+2. Install "esp32 by Espressif Systems" in Boards Manager.
+   The firmware targets the Arduino-ESP32 3.3.x API.
+3. Create a sketch folder named:
+       BryantDualBridge
+4. Put these two files in it:
+       BryantDualBridge.ino
+       secrets.h
+5. Edit secrets.h with:
+       Wi-Fi SSID/password
+       MQTT broker address
+       MQTT username/password if required
+
+BOARD SETTINGS
+--------------
+Use:
+  Board: ESP32 Dev Module
+  CPU Frequency: 240 MHz
+  Flash Frequency: 80 MHz
+  Flash Mode: QIO
+  Flash Size: 4 MB
+  PSRAM: Disabled
+  Upload Speed: 921600
+
+Olimex also appears in the current ESP32 board package. If you select the
+specific Olimex ESP32-POE-ISO entry instead, the sketch still explicitly
+sets the Ethernet PHY pins and clock mode.
+
+FLASHING
+--------
+1. For the first flash, leave the two Bryant RS-485 connections disconnected.
+2. Connect the Olimex board to your computer using its Micro-USB programming
+   connector. USB can power the board during commissioning.
+3. In Arduino IDE:
+       Tools -> Port -> select the Olimex USB serial port
+4. Click Verify.
+5. Click Upload.
+6. Open Serial Monitor at 115200 baud.
+
+Expected startup messages include:
+  Bryant Zone Perfect Plus Dual ESP32 Bridge
+  [Bryant HVAC 1] UART started...
+  [Bryant HVAC 2] UART started...
+  [WiFi] connecting...
+  [ETH] begin: OK
+
+When Wi-Fi gets an IP, MQTT should connect. Home Assistant discovery should
+create two devices:
+  Bryant HVAC 1
+  Bryant HVAC 2
+
+ETHERNET / POE
+--------------
+The firmware starts Wi-Fi as a fallback and Ethernet at boot.
+
+- With no Ethernet IP, it stays on Wi-Fi.
+- When Ethernet receives an IP, Wi-Fi is disconnected and MQTT reconnects
+  over Ethernet.
+- If Ethernet later goes down, Wi-Fi reconnects automatically.
+
+Once commissioning is complete, power can come from IEEE 802.3af PoE.
+
+CONNECTING THE HVAC BUSES
+-------------------------
+Power down the HVAC zoning panels / interface before making or changing the
+DFR0845 field wiring.
+
+Then connect:
+  System 1 -> DFR0845 #1
+  System 2 -> DFR0845 #2
+
+Restore power and watch Serial Monitor. Each system should begin seeing normal
+CZII traffic. The firmware waits for valid passive traffic before doing its
+periodic active master polls.
+
+HOME ASSISTANT
+--------------
+Each Bryant system publishes:
+  - 3 climate entities
+  - always-visible Heat Setpoint and Cool Setpoint numbers for each zone
+  - Hold switch per zone
+  - Out switch per zone
+  - Resume Schedule button per zone
+  - Temporary override diagnostic
+  - Damper position
+  - Outside temperature
+  - Leaving-air temperature
+  - Equipment state
+  - Current schedule period
+  - Zone Control select:
+      Individual Zones
+      All Follow Zone 1
+      All Follow Zone 2
+      All Follow Zone 3
+
+ALL mode mirrors the actual Bryant behavior:
+  - T1/R16 stored setpoints are not overwritten.
+  - All effective setpoint/HOLD/OUT controls are routed to the selected source
+    zone while ALL is active.
+  - Physical room temperatures and damper positions remain per-zone.
+  - Returning to Individual Zones immediately exposes each zone's stored
+    independent setpoints again.
+
+NOTES
+-----
+The remote-room temperatures in T9/R1 were empirically confirmed on the
+user's Bryant installations:
+  slot 2 = Zone 2 sensor
+  slot 3 = Zone 3 sensor
+
+The firmware validates CZII CRCs and uses read-modify-write + readback
+verification for every writable row.
