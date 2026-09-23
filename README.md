@@ -13,17 +13,29 @@ I used an Olimex ESP32-POE-EA-IND along with two DFRobot DFR0845 isolated RS-485
 "What functions are supported?"
 
 The program supports every function of the system, save for scheduling, which is so painful to use that it's best left at the thermostat. You can always create automations to change temperatures and enable/disable zones while leaving the thermostat on HOLD mode. Supported functions include:
+
 Temperature at each zone
+
 Leaving air temperature
+
 Position of each damper
+
 Indoor relative humidity at thermostat (zone 1)
+
 Outside temperature
+
 Mode (Heat, Cool, Auto, Off)
+
 Fan (Auto, On)
+
 OUT (used to disable certain zones)
+
 HOLD (hold mode for each zone)
+
 ALL (makes the system a single zone, based on a zone of your choice)
+
 Equipment status (Fan, Cooling, Heating, Idle, etc.)
+
 Resume schedule (disables HOLD and OUT for a given zone and lets the thermostat use its schedule)
 
 The system status is broadcast over the serial interface every 10-11 seconds, so the information being sent to your MQTT broker is constantly updated. If your HVAC system is set up with dehumidification mode and a reversible heat pump, some of those functions might not work since I can't test them. All the functions of my HVAC system (conventional AC and gas furnace) work properly.
